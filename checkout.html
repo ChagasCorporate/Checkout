@@ -235,7 +235,7 @@ function validate(){
 async function sendToSheets(entry) {
   return new Promise((resolve) => {
     try {
-      const params = Object.keys(entry).map(k => 
+      const params = Object.keys(entry).map(k =>
         encodeURIComponent(k) + '=' + encodeURIComponent(entry[k])
       ).join('&');
       const url = SHEETS_URL + '?' + params;
@@ -281,4 +281,3 @@ function doSubmit(){
 </script>
 </body>
 </html>
- 
