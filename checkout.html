@@ -188,7 +188,7 @@ body { background: #f5f5f3; font-family: -apple-system, BlinkMacSystemFont, 'Seg
 
 <script>
 const KEY = 'vip_sheets_url';
-const SHEETS_URL = 'https://script.google.com/macros/s/AKfycbwsnIHDW08VFCtv4oEoLRsAUYHBL12aqB9C6AXEgl-ry8SDnvyp4GzggTuRTx2fgUheyg/exec';
+const SHEETS_URL = 'https://script.google.com/macros/s/AKfycbwbnFhpWNNDiyEYi7PvvcVeCVW0e3rjD2k6iKMz2zTttI87szjqjFJtMAfT75H6BN0KNQ/exec';
 
 window.addEventListener('load', () => {
   const saved = localStorage.getItem(KEY);
@@ -233,16 +233,27 @@ function validate(){
 }
 
 async function sendToSheets(entry) {
-  try {
-    await fetch(SHEETS_URL, {
-      method: 'POST',
-      mode: 'no-cors',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(entry)
-    });
-  } catch(e) {
-    console.warn('Sheets error:', e);
-  }
+  return new Promise((resolve) => {
+    try {
+      const params = new URLSearchParams(entry).toString();
+      const url = SHEETS_URL + '?' + params;
+
+      let iframe = document.getElementById('hidden_iframe');
+      if (!iframe) {
+        iframe = document.createElement('iframe');
+        iframe.name = 'hidden_iframe';
+        iframe.id = 'hidden_iframe';
+        iframe.style.display = 'none';
+        document.body.appendChild(iframe);
+      }
+      iframe.onload = () => resolve();
+      iframe.src = url;
+      setTimeout(resolve, 3000);
+    } catch(e) {
+      console.warn('Sheets error:', e);
+      resolve();
+    }
+  });
 }
 
 function doSubmit(){
